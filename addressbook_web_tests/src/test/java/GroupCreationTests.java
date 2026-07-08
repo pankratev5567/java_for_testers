@@ -14,6 +14,14 @@ public class GroupCreationTests extends TestBase {
     public void canCreateGroupWithEmptyName() {
         openGroupsPage();
         driver.findElement(By.linkText("groups")).click();
-        createGroup(new GroupData("", "", ""));
+        createGroup(new GroupData());
+    }
+
+    @Test
+    public void canCreateGroupWithNameOnly() {
+        openGroupsPage();
+        var emptyGroup = new GroupData();
+        var groupWithName = emptyGroup.withName("some name");
+        createGroup(new GroupData().withName("some name"));
     }
 }
