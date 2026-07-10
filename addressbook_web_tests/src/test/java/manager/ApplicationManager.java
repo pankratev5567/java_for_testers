@@ -8,47 +8,50 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class ApplicationManager {
+
     protected WebDriver driver;
     private LoginHelper session;
-    private GroupHelper groups;
-
-    public void init(String browser) {
-        if (driver == null) {
-            if ("firefox".equals(browser)) {
-                driver = new FirefoxDriver();
-            } else if ("chrome" .equals(browser)) {
-                    driver = new ChromeDriver();
-            } else {
-                throw new IllegalArgumentException(String.format("Unknown browser %s", browser));
-            }
-            Runtime.getRuntime().addShutdownHook(new Thread(driver::quit));
-            driver.get("http://localhost/addressbook/index.php");
-            driver.manage().window().setSize(new Dimension(1146, 695));
-            session().login("admin", "secret");
-        }
-    }
+    private GroupHelper groupHelper;
 
     public LoginHelper session() {
         if (session == null) {
             session = new LoginHelper(this);
         }
-        return session;
+        return session ;
     }
 
-    public GroupHelper groups() {
-        if (groups == null) {
-            groups = new GroupHelper(this);
+    public GroupHelper groupHelper(){
+        if (groupHelper == null){
+            groupHelper = new GroupHelper(this);
         }
-        return groups;
+        return groupHelper;
     }
-    public boolean isElementPresent(By locator) {
+
+    public void init(String browser) {
+        if (driver == null) {
+            if ("firefox".equals(browser)){
+                driver = new FirefoxDriver();
+            } else if ("chrome".equals(browser)) {
+                driver = new ChromeDriver();
+            }
+            else {
+                throw new IllegalArgumentException(String.format("Unknown browser %s", browser));
+            }
+            Runtime.getRuntime().addShutdownHook(new Thread(driver::quit));
+            driver.get("http://localhost/addressbook/");
+            driver.manage().window().setSize(new Dimension(1936, 1048));
+            session().login("admin", "secret");
+        }
+    }
+
+    protected boolean isElementPresent(By locator) {
         try {
             driver.findElement(locator);
             return true;
-        } catch (NoSuchElementException exception) {
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getMessage());
             return false;
         }
-
     }
 
 }

@@ -3,13 +3,13 @@ package tests;
 import model.GroupData;
 import org.junit.jupiter.api.Test;
 
-public class GroupModificationTests  extends TestBase {
+public class GroupModificationTests extends TestBase {
 
     @Test
-    void canModifyGroup() {
-        if (!app.groups().isGroupPresent()) {
-            app.groups().createGroup(new GroupData("group name", "group header", "group footer"));
+    void canModifyGroup(){
+        if(!app.groupHelper().isGroupPresent()){
+            app.groupHelper().createGroup(new GroupData("group name", "header", "footer"));
         }
-        app.groups().modifyGroup(new GroupData().withName("modified name"));
+        app.groupHelper().modifyGroup(new GroupData().withName("mod name"));
     }
 }
