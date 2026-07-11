@@ -12,21 +12,25 @@ public class ApplicationManager {
     protected WebDriver driver;
     private LoginHelper session;
     private GroupHelper groupHelper;
-
+    private ContactHelper contactHelper;
     public LoginHelper session() {
         if (session == null) {
             session = new LoginHelper(this);
         }
         return session ;
     }
-
     public GroupHelper groupHelper(){
         if (groupHelper == null){
             groupHelper = new GroupHelper(this);
         }
         return groupHelper;
     }
-
+    public ContactHelper contactHelper(){
+        if (contactHelper == null){
+            contactHelper = new ContactHelper(this);
+        }
+        return contactHelper;
+    }
     public void init(String browser) {
         if (driver == null) {
             if ("firefox".equals(browser)){
@@ -43,7 +47,6 @@ public class ApplicationManager {
             session().login("admin", "secret");
         }
     }
-
     protected boolean isElementPresent(By locator) {
         try {
             driver.findElement(locator);
@@ -53,5 +56,7 @@ public class ApplicationManager {
             return false;
         }
     }
-
+    public WebDriver getDriver() {
+        return driver;
+    }
 }
