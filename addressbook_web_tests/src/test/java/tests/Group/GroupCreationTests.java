@@ -3,39 +3,52 @@ package tests.Group;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import tests.TestBase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroupCreationTests extends TestBase {
 
-    @Test
-    public void canCreateGroup() {
-        int groupCount = app.groupHelper().getCount();
-        app.groupHelper().createGroup(new GroupData("name", "group header", "group footer"));
-        int newGroupCount = app.groupHelper().getCount();
-        Assertions.assertEquals(groupCount+1,newGroupCount);
+        public static List<GroupData> groupProvider() {
+            var result = new ArrayList<GroupData>();
+            for (var name : List.of("", "group name")) {
+                for (var header : List.of("", "group header")) {
+                    for (var footer : List.of("", "group footer")) {
+                        result.add(new GroupData(name, header, footer));
+                    }
+                }
+            }
+            for (int i = 0; i < 5; i++) {
+                result.add(new GroupData(randomString(i * 10), randomString(i * 10), randomString(i * 10)));
+            }
+            return result;
+        }
+
+        public static List<GroupData> negativeGroupProvider() {
+            var result = new ArrayList<GroupData>(List.of(
+                    new GroupData("group name ' ", "group header", "group footer")));
+            return result;
+        }
+
+        @ParameterizedTest
+        @MethodSource("groupProvider")
+        public void canCreateMultipleGroups(GroupData name) {
+            int groupCount = app.groupHelper().getCount();
+            app.groupHelper().createGroup(name);
+            int newGroupCount = app.groupHelper().getCount();
+            Assertions.assertEquals(groupCount + 1, newGroupCount);
+        }
+
+        @ParameterizedTest
+        @MethodSource("negativeGroupProvider")
+        public void canNotCreateGroup(GroupData name) {
+            int groupCount = app.groupHelper().getCount();
+            app.groupHelper().createGroup(name);
+            int newGroupCount = app.groupHelper().getCount();
+            Assertions.assertEquals(groupCount, newGroupCount);
+        }
+
     }
-
-
-    @Test
-    public void canCreateGroupWithEmptyName() {
-        app.groupHelper().createGroup(new GroupData());
-    }
-
-    @Test
-    public void canCreateGroupWithNameOnly() {
-        var emptyGroup =new GroupData();
-        var groupWithName = emptyGroup.withName("some name");
-        app.groupHelper().createGroup(groupWithName);
-    }
-
-    @Test
-    public void canCreateGroupWithHeaderOnly() {
-        app.groupHelper().createGroup(new GroupData().withHeader("some header"));
-    }
-
-    @Test
-    public void canCreateGroupWithFooterOnly() {
-        app.groupHelper().createGroup(new GroupData().withFooter("some footer"));
-    }
-
-}
