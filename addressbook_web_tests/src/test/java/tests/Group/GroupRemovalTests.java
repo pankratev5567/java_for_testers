@@ -9,7 +9,7 @@ public class GroupRemovalTests extends TestBase {
 
     @Test
     public void canRemoveGroup()  {
-        if(!app.groupHelper().isGroupPresent()){
+        if(app.groupHelper().getCount() == 0) {
             app.groupHelper().createGroup(new GroupData("group name", "header", "footer"));
         }
         int groupCountStart = app.groupHelper().getCount();
@@ -17,5 +17,13 @@ public class GroupRemovalTests extends TestBase {
         int groupCountEnd = app.groupHelper().getCount();
         Assertions.assertEquals(groupCountStart-1,groupCountEnd);
     }
+    @Test
+    void canRemoveAllGroupAtOnce(){
+        if(app.groupHelper().getCount() == 0){
+            app.groupHelper().createGroup(new GroupData("group name", "header", "footer"));
+        }
+        app.groupHelper().removeAllGroups();
 
+        Assertions.assertEquals(0,app.groupHelper().getCount());
+    }
 }
