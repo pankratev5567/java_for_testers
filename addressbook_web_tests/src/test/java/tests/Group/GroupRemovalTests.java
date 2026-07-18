@@ -5,22 +5,32 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tests.TestBase;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+
 public class GroupRemovalTests extends TestBase {
 
     @Test
     public void canRemoveGroup()  {
-        if(app.groupHelper().getCount() == 0) {
-            app.groupHelper().createGroup(new GroupData("group name", "header", "footer"));
+        if(app.groupHelper().getCount() == 0){
+            app.groupHelper().createGroup(new GroupData("", "group name", "header", "footer"));
         }
-        int groupCountStart = app.groupHelper().getCount();
-        app.groupHelper().removeGroup();
-        int groupCountEnd = app.groupHelper().getCount();
-        Assertions.assertEquals(groupCountStart-1,groupCountEnd);
+        var oldGroups = app.groupHelper().getList();
+        var rnd = new Random();
+        var index = rnd.nextInt(oldGroups.size());
+        app.groupHelper().removeGroup(oldGroups.get(index));
+        var newGroups = app.groupHelper().getList();
+        var expectedList = new ArrayList<>(oldGroups);
+        expectedList.remove(index);
+        Assertions.assertEquals(newGroups,expectedList);
     }
+
     @Test
     void canRemoveAllGroupAtOnce(){
         if(app.groupHelper().getCount() == 0){
-            app.groupHelper().createGroup(new GroupData("group name", "header", "footer"));
+            app.groupHelper().createGroup(new GroupData("", "group name", "header", "footer"));
         }
         app.groupHelper().removeAllGroups();
 
