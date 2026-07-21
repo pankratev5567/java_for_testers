@@ -80,6 +80,7 @@ public class ContactHelper extends HelperBase{
         type(By.name("middlename"), contact.Middlename());
         type(By.name("lastname"),contact.Lastname());
         type(By.name("nickname"),contact.Nickname());
+        attach(By.name("photo"),contact.Photo());
         type(By.name("title"),contact.Title());
         type(By.name("company"),contact.Company());
         type(By.name("address"),contact.Address());

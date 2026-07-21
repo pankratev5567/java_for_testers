@@ -28,14 +28,16 @@ public class ContactCreationTests extends TestBase {
 
     @Test
     public void canCreateContactFIO() {
-        var emptyContact = new ContactData();
-        var contactFIO = emptyContact.withFIO("Майкл", "Джозеф", "Джексон");
-        app.contactHelper().createContact(contactFIO);
+        var emptyContact = new ContactData()
+                .withFirstname("Майкл")
+                .withLastname("Джексон")
+                .withPhoto("src/test/resources/images/avatar.png");
+        app.contactHelper().createContact(emptyContact);
     }
 
     @Test
     public void canCreateFull() {
-        app.contactHelper().createContact(new ContactData("","Майкл", "Джозеф", "Джексон", "Michael", "King of Pop", "Sony Music",
+        app.contactHelper().createContact(new ContactData("","Майкл", "Джозеф", "Джексон", "Michael","", "King of Pop", "Sony Music",
                 "Neverland Ranch, 5225 Figueroa Mountain Road, Los Olivos, CA 93441", "USA", "555-1234", "work", "michael@jackson.com",
                 "mj@neverland.com", "info@michaeljackson.com", "home"));
     }
