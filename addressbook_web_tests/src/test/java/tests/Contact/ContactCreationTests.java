@@ -29,9 +29,9 @@ public class ContactCreationTests extends TestBase {
     @Test
     public void canCreateContactFIO() {
         var emptyContact = new ContactData()
-                .withFirstname("Майкл")
-                .withLastname("Джексон")
-                .withPhoto("src/test/resources/images/avatar.png");
+                .withFirstname(randomString(10))
+                .withLastname(randomString(10))
+                .withPhoto(randomFile("src/test/resources/images"));
         app.contactHelper().createContact(emptyContact);
     }
 
