@@ -1,68 +1,101 @@
 package tests.Group;
 
+import ru.stqa.common.CommonFunctions;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.stqa.common.CommonFunctions;
 import tests.TestBase;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class GroupCreationTests extends TestBase {
 
-        public static List<GroupData> groupProvider() {
-            var result = new ArrayList<GroupData>();
-            for (var name : List.of("", "group name")) {
-                for (var header : List.of("", "group header")) {
-                    for (var footer : List.of("", "group footer")) {
-                        result.add(new GroupData()
-                                .withName(name)
-                                .withHeader(header)
-                                .withFooter(footer));
-                    }
-                }
-            }
-            for (int i = 0; i < 5; i++) {
-                result.add(new GroupData()
-                        .withName(CommonFunctions.randomString(i*10))
-                        .withHeader(CommonFunctions.randomString(i*10))
-                        .withFooter(CommonFunctions.randomString(i*10)));
-            }
-            return result;
-        }
-
-        public static List<GroupData> negativeGroupProvider() {
-            var result = new ArrayList<GroupData>(List.of(
-                    new GroupData("", "group name ' ", "group header", "group footer")));
-            return result;
-        }
-
-        @ParameterizedTest
-        @MethodSource("groupProvider")
-        public void canCreateMultipleGroups(GroupData group) {
-            var oldGroups = app.groupHelper().getList();
-            app.groupHelper().createGroup(group);
-            var newGroups = app.groupHelper().getList();
-            Comparator<GroupData> compareById = (o1, o2) -> {
-                return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
-            };
-            newGroups.sort(compareById);
-            var expectedList = new ArrayList<>(oldGroups);
-            expectedList.add(group.withId(newGroups.get(newGroups.size()-1).id()).withHeader("").withFooter(""));
-            expectedList.sort(compareById);
-            Assertions.assertEquals(newGroups,expectedList);
-        }
-
-        @ParameterizedTest
-        @MethodSource("negativeGroupProvider")
-        public void canNotCreateGroup(GroupData name) {
-            var oldGroups = app.groupHelper().getList();
-            app.groupHelper().createGroup(name);
-            var newGroups = app.groupHelper().getList();
-            Assertions.assertEquals(newGroups,oldGroups);
-        }
-
+    public static List<GroupData> groupProvider() throws IOException {
+        var result = new ArrayList<GroupData>();
+//        for (var name :List.of("","group name")){
+//            for (var header:List.of("","group header")){
+//                for (var footer:List.of("","group footer")){
+//                    result.add(new GroupData()
+//                            .withName(name)
+//                            .withHeader(header)
+//                            .withFooter(footer));
+//                }
+//            }
+//        }
+        ObjectMapper mapper = new ObjectMapper();
+        var value = mapper.readValue(new File("groups.json"),  new TypeReference<List<GroupData>>(){});
+        result.addAll(value);
+        return result;
     }
+
+    public static List<GroupData> negativeGroupProvider() {
+        var result = new ArrayList<GroupData>(List.of(
+                new GroupData("", "group name ' ","group header", "group footer")));
+        return result;
+    }
+
+//    @Test
+//    public void canCreateGroup() {
+//        app.groupHelper().createGroup(new GroupData("group name", "group header", "group footer"));
+//    }
+
+
+//    @ParameterizedTest
+//    @ValueSource(strings = {"group name","group name'"})
+//    public void canCreateGroupWithEmptyName(String name) {
+//        int groupCount = app.groupHelper().getCount();
+//        app.groupHelper().createGroup(new GroupData(name, "group header", "group footer"));
+//        int newGroupCount = app.groupHelper().getCount();
+//        Assertions.assertEquals(groupCount+1,newGroupCount);
+//    }
+
+//    @Test
+//    public void canCreateGroupWithNameOnly() {
+//        var emptyGroup =new GroupData();
+//        var groupWithName = emptyGroup.withName("some name");
+//        app.groupHelper().createGroup(groupWithName);
+//    }
+
+//    @Test
+//    public void canCreateGroupWithHeaderOnly() {
+//        app.groupHelper().createGroup(new GroupData().withHeader("some header"));
+//    }
+//
+//    @Test
+//    public void canCreateGroupWithFooterOnly() {
+//        app.groupHelper().createGroup(new GroupData().withFooter("some footer"));
+//    }
+
+    @ParameterizedTest
+    @MethodSource("groupProvider")
+    public void canCreateMultipleGroups(GroupData group) {
+        var oldGroups = app.groupHelper().getList();
+        app.groupHelper().createGroup(group);
+        var newGroups = app.groupHelper().getList();
+        Comparator<GroupData> compareById = (o1, o2) -> {
+            return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+        };
+        newGroups.sort(compareById);
+        var expectedList = new ArrayList<>(oldGroups);
+        expectedList.add(group.withId(newGroups.get(newGroups.size()-1).id()).withHeader("").withFooter(""));
+        expectedList.sort(compareById);
+        Assertions.assertEquals(newGroups,expectedList);
+    }
+
+    @ParameterizedTest
+    @MethodSource("negativeGroupProvider")
+    public void canNotCreateGroup(GroupData name) {
+        var oldGroups = app.groupHelper().getList();
+        app.groupHelper().createGroup(name);
+        var newGroups = app.groupHelper().getList();
+        Assertions.assertEquals(newGroups,oldGroups);
+    }
+
+}

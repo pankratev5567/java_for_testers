@@ -1,11 +1,11 @@
 package tests.Contact;
 
+import ru.stqa.common.CommonFunctions;
 import model.ContactData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.stqa.common.CommonFunctions;
 import tests.TestBase;
 
 import java.util.ArrayList;
