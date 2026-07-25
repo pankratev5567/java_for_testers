@@ -2,6 +2,7 @@ package ru.stqa.addressbook.generator;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import ru.stqa.common.CommonFunctions;
 import model.GroupData;
 import tools.jackson.databind.ObjectMapper;
@@ -76,6 +77,9 @@ public class Generator {
             try(var writer = new FileWriter(output);){
                 writer.write(json);
             }
+        } if ("yaml".equals(format)){
+            var mapper = new YAMLMapper();
+            mapper.writeValue(new File(output),data);
 //            writer.close();
         } else throw new IllegalArgumentException("Неизвестный формат данных" + format);
     }
