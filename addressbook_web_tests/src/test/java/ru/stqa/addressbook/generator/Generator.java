@@ -10,6 +10,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -70,10 +71,12 @@ public class Generator {
     private void save(Object data) throws IOException {
         if ("json".equals(format)) {
             ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
-            mapper.writeValue(new File(output), data);
-        } else throw new IllegalArgumentException("Неизвестный формат" + format);
+            var json =  mapper.writeValueAsString(data);
+
+            try(var writer = new FileWriter(output);){
+                writer.write(json);
+            }
+//            writer.close();
+        } else throw new IllegalArgumentException("Неизвестный формат данных" + format);
     }
-
-
-
 }
