@@ -17,14 +17,7 @@ public class TestBase {
         }
         app.init(System.getProperty("browser","firefox"));
     }
-    public static String randomString(int n){
-        var r = new Random();
-        var result = "";
-        for (int i =0;i<n;i++){
-            result = result+(char)('a'+r.nextInt(26/*33*/));
-        }
-        return result;
-    }
+
     public static String randomFile(String dir){
         var file = new File(dir).list();
         Random rnd = new Random();
