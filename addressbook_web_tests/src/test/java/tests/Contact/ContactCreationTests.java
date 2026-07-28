@@ -2,28 +2,39 @@ package tests.Contact;
 
 import ru.stqa.common.CommonFunctions;
 import model.ContactData;
+import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import tests.TestBase;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class ContactCreationTests extends TestBase {
 
-    public static List<ContactData> contactProvider(){
+    public static List<ContactData> contactProvider() throws IOException {
         var result = new ArrayList<ContactData>();
-        for (var Firstname :List.of("","Майкл")) {
-                for (var Lastname : List.of("", "Джексон")) {
-                    result.add(new ContactData().withNames(Firstname,Lastname));
-                }
+        var json = "";
+        try (var reader = new FileReader("contacts.json");
+             var breader = new BufferedReader(reader)
+        ) {
+            var line =  breader.readLine();
+            while (line!= null){
+                json=json+line;
+                line=breader.readLine();
             }
-        for (int i=0;i<5;i++) {
-            result.add(new ContactData().withFIO(CommonFunctions.randomString(i*10), CommonFunctions.randomString(i*10), CommonFunctions.randomString(i*10)));
         }
+        ObjectMapper mapper = new ObjectMapper();
+        var value = mapper.readValue(json,  new TypeReference<List<ContactData>>(){});
+        result.addAll(value);
         return result;
     }
 
