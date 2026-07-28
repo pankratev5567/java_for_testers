@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tests.TestBase;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,20 +32,18 @@ public class GroupCreationTests extends TestBase {
 //                }
 //            }
 //        }
-        var json = "";
-        try (var reader = new FileReader("groups.json");
-             var breader = new BufferedReader(reader)
-        ) {
-            var line =  breader.readLine();
-            while (line!= null){
-                json=json+line;
-                line=breader.readLine();
-            }
-        }
-//        var json = Files.readString(Paths.get("groups.json"));
-        ObjectMapper mapper = new ObjectMapper();
-        var value = mapper.readValue(json,  new TypeReference<List<GroupData>>(){});
-        result.addAll(value);
+ //       var json = "";
+ //       try (var reader = new FileReader("groups.json");
+  //           var breader = new BufferedReader(reader)
+  //      ) {
+  //          var line =  breader.readLine();
+  //          while (line!= null){
+  //              json=json+line;
+  //              line=breader.readLine();
+  //          }
+   //     }
+        var mapper = new XmlMapper();
+        var value = mapper.readValue(new File("groups.xml"),  new TypeReference<List<GroupData>>(){});
         result.addAll(value);
         return result;
     }

@@ -8,6 +8,7 @@ import model.GroupData;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 
 import java.io.File;
@@ -17,16 +18,16 @@ import java.util.ArrayList;
 
 public class Generator {
 
-    @Parameter(names={"--type", "-t"})
+    @Parameter(names = {"--type", "-t"})
     String type;
 
-    @Parameter(names={"--output", "-o"})
+    @Parameter(names = {"--output", "-o"})
     String output;
 
-    @Parameter(names={"--format", "-f"})
+    @Parameter(names = {"--format", "-f"})
     String format;
 
-    @Parameter(names={"--count", "-c"})
+    @Parameter(names = {"--count", "-c"})
     int count;
 
 
@@ -45,7 +46,7 @@ public class Generator {
     }
 
     private Object generate() {
-        if ("groups".equals(type)){
+        if ("groups".equals(type)) {
             return generatorGroups();
         } else if ("contacts".equals(type)) {
             return generatorContacts();
@@ -56,11 +57,11 @@ public class Generator {
 
     private Object generatorGroups() {
         var result = new ArrayList<GroupData>();
-        for (int i=0;i<count;i++) {
+        for (int i = 0; i < count; i++) {
             result.add(new GroupData()
-                    .withName(CommonFunctions.randomString(i*10))
-                    .withHeader(CommonFunctions.randomString(i*10))
-                    .withFooter(CommonFunctions.randomString(i*10)));
+                    .withName(CommonFunctions.randomString(i * 10))
+                    .withHeader(CommonFunctions.randomString(i * 10))
+                    .withFooter(CommonFunctions.randomString(i * 10)));
         }
         return result;
     }
@@ -72,15 +73,19 @@ public class Generator {
     private void save(Object data) throws IOException {
         if ("json".equals(format)) {
             ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
-            var json =  mapper.writeValueAsString(data);
+            var json = mapper.writeValueAsString(data);
 
-            try(var writer = new FileWriter(output);){
+            try (var writer = new FileWriter(output);) {
                 writer.write(json);
             }
-        } if ("yaml".equals(format)){
+        }
+        if ("yaml".equals(format)) {
             var mapper = new YAMLMapper();
-            mapper.writeValue(new File(output),data);
-//            writer.close();
-        } else throw new IllegalArgumentException("Неизвестный формат данных" + format);
+            mapper.writeValue(new File(output), data);
+        }
+            if ("xml".equals(format)) {
+                var mapper = new XmlMapper();
+                mapper.writeValue(new File(output), data);
+            } else throw new IllegalArgumentException("Неизвестный формат" + format);
+        }
     }
-}
