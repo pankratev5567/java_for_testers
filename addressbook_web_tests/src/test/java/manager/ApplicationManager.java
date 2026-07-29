@@ -17,6 +17,7 @@ public class ApplicationManager {
     private GroupHelper groupHelper;
     private ContactHelper contactHelper;
     private Properties properties;
+    private JdbcHelper jdbc;
     public LoginHelper session() {
         if (session == null) {
             session = new LoginHelper(this);
@@ -35,6 +36,13 @@ public class ApplicationManager {
         }
         return contactHelper;
     }
+    public JdbcHelper jdbc(){
+        if (jdbc == null){
+            jdbc = new JdbcHelper(this);
+        }
+        return jdbc;
+    }
+
     public void init(String browser, Properties properties) {
         this.properties = properties;
         if (driver == null) {
