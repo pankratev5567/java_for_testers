@@ -8,6 +8,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.DoubleSummaryStatistics;
+import java.util.Properties;
 
 public class ApplicationManager {
 
@@ -15,6 +16,7 @@ public class ApplicationManager {
     private LoginHelper session;
     private GroupHelper groupHelper;
     private ContactHelper contactHelper;
+    private Properties properties;
     public LoginHelper session() {
         if (session == null) {
             session = new LoginHelper(this);
@@ -33,7 +35,8 @@ public class ApplicationManager {
         }
         return contactHelper;
     }
-    public void init(String browser) {
+    public void init(String browser, Properties properties) {
+        this.properties = properties;
         if (driver == null) {
             if ("firefox".equals(browser)){
                 driver = new FirefoxDriver();
@@ -44,9 +47,9 @@ public class ApplicationManager {
                 throw new IllegalArgumentException(String.format("Unknown browser %s", browser));
             }
             Runtime.getRuntime().addShutdownHook(new Thread(driver::quit));
-            driver.get("http://localhost/addressbook/");
+            driver.get(properties.getProperty("web.baseURL"));
             driver.manage().window().setSize(new Dimension(1936, 1048));
-            session().login("admin", "secret");
+            session().login(properties.getProperty("web.userName"), properties.getProperty("web.password"));
         }
     }
     protected boolean isElementPresent(By locator) {
