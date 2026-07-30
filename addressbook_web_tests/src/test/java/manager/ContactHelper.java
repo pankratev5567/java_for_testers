@@ -1,17 +1,19 @@
 package manager;
 
 import model.ContactData;
+import model.GroupData;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class ContactHelper extends HelperBase{
 
     public ContactHelper(ApplicationManager manager) {
         super(manager);
     }
+
     public void createContact(ContactData conactD){
         openContactPage();
         setContact(conactD);
@@ -19,6 +21,40 @@ public class ContactHelper extends HelperBase{
         submitContactCreation();
         returnToHomePage();
     }
+
+    public void create(ContactData conactD, GroupData group){
+        openContactPage();
+        setContact(conactD);
+        setBirthday();
+        selectGroup(group);
+        submitContactCreation();
+        returnToHomePage();
+    }
+
+    public void selectGroup(GroupData group) {
+        new Select(manager.driver.findElement(By.name("new_group"))).selectByValue(group.id());
+    }
+
+    //Можно вынести в параметры и обернуть в tryCatch
+    private void setBirthday() {
+        typeS(By.name("bday"),"13");
+        typeS(By.name("bmonth"),"April");
+        typeS(By.name("byear"),"1999");
+    }
+
+    public void removalContact(ContactData conactD){
+        openHomePage();
+        selectContact(conactD);
+        click(By.name("delete"));
+        returnToHomePage();
+    }
+
+    public void removeAllContacts(){
+        openHomePage();
+        selectAllContact();
+        returnToHomePage();
+    }
+
     public void modifContact(ContactData conactD, ContactData modif){
         openHomePage();
         selectContactToEdit(conactD);
@@ -39,22 +75,7 @@ public class ContactHelper extends HelperBase{
 
     private void selectContactToEdit(ContactData conactD) {
         click(By.cssSelector(String.format("a[href*='edit.php?id=%s']", conactD.id())));    }
-    private void setBirthday() {
-        typeS(By.name("bday"),"24");
-        typeS(By.name("bmonth"),"May");
-        typeS(By.name("byear"),"2000");
-    }
-    public void removalContact(ContactData conactD){
-        openHomePage();
-        selectContact(conactD);
-        click(By.name("delete"));
-        returnToHomePage();
-    }
-    public void removeAllContacts(){
-        openHomePage();
-        selectAllContact();
-        returnToHomePage();
-    }
+
     private void selectContact(ContactData conactD) {
         click(By.cssSelector(String.format("input[value='%s']", conactD.id())));    }
 
@@ -65,22 +86,26 @@ public class ContactHelper extends HelperBase{
         }
         click(By.name("delete"));;
     }
+
     private void openContactPage() {
         if (!manager.isElementPresent(By.linkText("add address book entry"))) {
             click(By.linkText("add new"));
         }
     }
+
     private void openHomePage() {
         if (!manager.isElementPresent(By.linkText("Select all"))) {
             click(By.linkText("home"));
         }
     }
+
+
     private void setContact(ContactData contact) {
         type(By.name("firstname"),contact.Firstname());
         type(By.name("middlename"), contact.Middlename());
         type(By.name("lastname"),contact.Lastname());
         type(By.name("nickname"),contact.Nickname());
-        attach(By.name("photo"),contact.Photo());
+        // attach(By.name("photo"),contact.Photo());
         type(By.name("title"),contact.Title());
         type(By.name("company"),contact.Company());
         type(By.name("address"),contact.Address());
@@ -91,17 +116,24 @@ public class ContactHelper extends HelperBase{
         type(By.name("email2"),contact.EmailTwo());
         type(By.name("email3"),contact.EmailThree());
         type(By.name("homepage"),contact.Homepage());
+
+
     }
+
     private void submitContactCreation() {
         click(By.name("submit"));
     }
+    // Возврат на домашнюю страницу
     private void returnToHomePage() {
         click(By.linkText("home page"));
     }
+
+    //Есть ли
     public boolean isContactPresent() {
         openHomePage();
         return manager.isElementPresent(By.name("selected[]"));
     }
+
     public int getContactCount(){
         openHomePage();
         return manager.driver.findElements(By.name("selected[]")).size();

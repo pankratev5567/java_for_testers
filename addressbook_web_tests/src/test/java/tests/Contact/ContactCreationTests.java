@@ -69,4 +69,20 @@ public class ContactCreationTests extends TestBase {
         expectedList.sort(compareById);
         Assertions.assertEquals(newContact, expectedList);
     }
+
+    @Test
+    public void canCreateContactInGroup(){
+        var contact = new ContactData()
+                .withFirstname(CommonFunctions.randomString(10))
+                .withLastname(CommonFunctions.randomString(10))
+                .withPhoto(randomFile("src/test/resources/images"));
+        if(app.groupHelper().getCount() == 0){
+            app.groupHelper().createGroup(new GroupData("", "group name", "header", "footer"));
+        }
+        var group = app.hbm().getGroupList().get(0);
+        var oldRelated = app.hbm().getContactsInGroup(group);
+        app.contactHelper().create(contact, group);
+        var newRelated = app.hbm().getContactsInGroup(group);
+        Assertions.assertEquals(oldRelated.size()+1,newRelated.size());
+    }
 }
