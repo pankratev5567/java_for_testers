@@ -21,7 +21,6 @@ public class HibernateHelper extends HelperBase{
                 //.addAnnotatedClass(Book.class)
                 // .addAnnotatedClass(GroupRecord.class)
                 .addAnnotatedClass(GroupRecord.class)
-                .addAnnotatedClass(ContactRecord.class)
                 .setProperty(AvailableSettings.URL, "jdbc:mysql://localhost/addressbook")
                 .setProperty(AvailableSettings.USER, "root")
                 .setProperty(AvailableSettings.PASS, "")
