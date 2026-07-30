@@ -3,6 +3,7 @@ package tests;
 import manager.ApplicationManager;
 import org.junit.jupiter.api.BeforeEach;
 import java.io.File;
+import org.junit.jupiter.api.AfterEach;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,5 +31,10 @@ public class TestBase {
         var index = rnd.nextInt(file.length);
         Paths.get(dir,file[index]).toString();
         return Paths.get(dir,file[index]).toString();
+    }
+
+    @AfterEach
+    void checkDatabaseConsistency(){
+        app.jdbc().checkConsistency();
     }
 }

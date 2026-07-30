@@ -91,7 +91,6 @@ public class GroupCreationTests extends TestBase {
 //    public void canCreateGroupWithFooterOnly() {
 //        app.groupHelper().createGroup(new GroupData().withFooter("some footer"));
 //    }
-
     @ParameterizedTest
     @MethodSource("singleRandomGroup")
     public void canCreateSingleGroups(GroupData group) {
@@ -101,7 +100,6 @@ public class GroupCreationTests extends TestBase {
         Comparator<GroupData> compareById = (o1, o2) -> {
             return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
         };
-
         newGroups.sort(compareById);
         var maxId =newGroups.get(newGroups.size()-1).id();
 
@@ -113,7 +111,6 @@ public class GroupCreationTests extends TestBase {
         // var mewUiGroups = app.groupHelper().getList();
 
     }
-
     @ParameterizedTest
     @MethodSource("negativeGroupProvider")
     public void canNotCreateGroup(GroupData name) {
@@ -122,5 +119,4 @@ public class GroupCreationTests extends TestBase {
         var newGroups = app.groupHelper().getList();
         Assertions.assertEquals(newGroups,oldGroups);
     }
-
 }

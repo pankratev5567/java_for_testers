@@ -84,4 +84,5 @@ public class ApplicationManager {
     public DoubleSummaryStatistics groups() {
         return null;
     }
+
 }
