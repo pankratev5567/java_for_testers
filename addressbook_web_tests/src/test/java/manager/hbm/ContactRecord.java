@@ -21,6 +21,7 @@ public class ContactRecord {
     public String home = "";
     public String mobile = "";
     public String work = "";
+    public String fax = "";
     public String email = "";
     public String email2 = "";
     public String email3 = "";

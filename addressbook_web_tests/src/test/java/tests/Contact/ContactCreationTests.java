@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class ContactCreationTests extends TestBase {
 
@@ -78,7 +79,8 @@ public class ContactCreationTests extends TestBase {
         if(app.groupHelper().getCount() == 0){
             app.groupHelper().createGroup(new GroupData("", "group name", "header", "footer"));
         }
-        var group = app.hbm().getGroupList().get(0);
+        var maxIndex = app.hbm().getGroupList().size();
+        var group = app.hbm().getGroupList().get(maxIndex-1);
         var oldRelated = app.hbm().getContactsInGroup(group);
         app.contactHelper().create(contact, group);
         var newRelated = app.hbm().getContactsInGroup(group);
@@ -94,6 +96,96 @@ public class ContactCreationTests extends TestBase {
 
         Assertions.assertEquals(oldRelated.size() + 1, newRelated.size());
         Assertions.assertEquals(newRelated, expectedList);
+    }
+    @Test
+    public void addContactToGroup(){
+        app.contactHelper().a();
+        if (app.contactHelper().checkboxes().isEmpty()){
+            app.hbm().createContact(new ContactData()
+                    .withNames(CommonFunctions.randomString(10),
+                            CommonFunctions.randomString(10)));
+        }
+        if(app.hbm().getGroupCount() == 0){
+            app.hbm().createGroup(new GroupData("", "group name", "header", "footer"));
+        }
+        var allContactList = app.hbm().getContactList();
+        var listC = app.contactHelper().getNonGroupList();
+        var rnd = new Random();
+        var indexContact = rnd.nextInt(listC.size());
+        var trycontact = listC.get(indexContact);
+//        var contact = allContactList.get(Integer.parseInt(trycontact));
+        var contact = allContactList.stream()
+                .filter(c -> c.id().equals(trycontact))
+                .findFirst()
+                .orElse(null);
+        var maxIndex = app.hbm().getGroupList().size();
+        var group = app.hbm().getGroupList().get(maxIndex-1); //жертва
+        var oldRelated = app.hbm().getContactsInGroup(group);
+        app.contactHelper().addToGroupContact(contact, group);
+        var newRelated = app.hbm().getContactsInGroup(group);
+
+
+
+        Comparator<ContactData> compareById = (o1, o2) -> {
+            return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+        };
+        newRelated.sort(compareById);
+
+        var expectedList = new ArrayList<>(oldRelated);
+        expectedList.add(contact);
+        expectedList.sort(compareById);
+
+        Assertions.assertEquals(newRelated, expectedList);
+    }
+    @Test
+    public void deletedContactFromGroup() {
+        if (app.hbm().getContactCount() == 0) {
+            app.hbm().createContact(new ContactData()
+                    .withNames(CommonFunctions.randomString(10),
+                            CommonFunctions.randomString(10)));
+        }
+        if (app.hbm().getGroupCount() == 0) {
+            app.hbm().createGroup(new GroupData("", "group name", "header", "footer"));
+        }
+
+        var rnd = new Random();
+        var groupList = app.hbm().getGroupList();
+        var indexGroup = rnd.nextInt(groupList.size());
+        var group = groupList.get(indexGroup);
+
+        var oldContacts = app.hbm().getContactsInGroup(group);
+
+        if (oldContacts.isEmpty()) {
+            if (app.hbm().getContactCount() == 0) {
+                app.hbm().createContact(new ContactData()
+                        .withNames(CommonFunctions.randomString(10),
+                                CommonFunctions.randomString(10)));
+            }
+
+            var contactList = app.hbm().getContactList();
+            var indexContact = rnd.nextInt(contactList.size());
+            var contact = contactList.get(indexContact);
+
+            app.contactHelper().addToGroupContact(contact, group);
+
+            oldContacts = app.hbm().getContactsInGroup(group);
+        }
+        var contact = oldContacts.get(rnd.nextInt(oldContacts.size()));
+        app.contactHelper().RemoveGroupFromContact(contact, group);
+
+        var newContacts = app.hbm().getContactsInGroup(group);
+
+        Comparator<ContactData> compareById = (o1, o2) ->
+                Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+        newContacts.sort(compareById);
+
+        var expectedList = new ArrayList<>(oldContacts);
+        expectedList.remove(contact);
+        expectedList.sort(compareById);
+
+
+        Assertions.assertEquals(newContacts, expectedList);
+
     }
 }
 
