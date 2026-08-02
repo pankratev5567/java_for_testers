@@ -57,9 +57,9 @@ public class ContactCreationTests extends TestBase {
     @ParameterizedTest
     @MethodSource("contactProvider")
     public void canCreateMultipleContactFIO(ContactData contact){
-        var oldContact = app.contactHelper().getList();
+        var oldContact = app.hbm().getContactList();
         app.contactHelper().createContact(contact);
-        var newContact = app.contactHelper().getList();
+        var newContact = app.hbm().getContactList();
         Comparator<ContactData> compareById = (o1, o2) -> {
             return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
         };
@@ -74,8 +74,7 @@ public class ContactCreationTests extends TestBase {
     public void canCreateContactInGroup(){
         var contact = new ContactData()
                 .withFirstname(CommonFunctions.randomString(10))
-                .withLastname(CommonFunctions.randomString(10))
-                .withPhoto(randomFile("src/test/resources/images"));
+                .withLastname(CommonFunctions.randomString(10));
         if(app.groupHelper().getCount() == 0){
             app.groupHelper().createGroup(new GroupData("", "group name", "header", "footer"));
         }
@@ -83,6 +82,18 @@ public class ContactCreationTests extends TestBase {
         var oldRelated = app.hbm().getContactsInGroup(group);
         app.contactHelper().create(contact, group);
         var newRelated = app.hbm().getContactsInGroup(group);
-        Assertions.assertEquals(oldRelated.size()+1,newRelated.size());
+        Comparator<ContactData> compareById = (o1, o2) -> {
+            return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+        };
+        newRelated.sort(compareById);
+
+        var expectedList = new ArrayList<>(oldRelated);
+        expectedList.add(contact.withId(newRelated.get(newRelated.size() - 1).id()));
+        expectedList.sort(compareById);
+
+
+        Assertions.assertEquals(oldRelated.size() + 1, newRelated.size());
+        Assertions.assertEquals(newRelated, expectedList);
     }
 }
+

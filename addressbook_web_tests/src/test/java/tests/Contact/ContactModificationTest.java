@@ -18,12 +18,12 @@ public class ContactModificationTest extends TestBase {
             var contactFIO = emptyContact.withFIO("Майкл", "Джозеф", "Джексон");
             app.contactHelper().createContact(contactFIO);
         }
-        var oldContact = app.contactHelper().getList();
+        var oldContact = app.hbm().getContactList();
         var rnd = new Random();
         var index = rnd.nextInt(oldContact.size());
         var testData = new ContactData().withNames("Майкл","Джексон");
         app.contactHelper().modifContact(oldContact.get(index),testData);
-        var newContact = app.contactHelper().getList();
+        var newContact = app.hbm().getContactList();
         var expectedList = new ArrayList<>(oldContact);
         expectedList.set(index,testData.withId(oldContact.get(index).id()));
         Comparator<ContactData> compareById = (o1, o2) -> {
