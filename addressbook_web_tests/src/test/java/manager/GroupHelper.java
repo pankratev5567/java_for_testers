@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openqa.selenium.WebElement;
 
 public class GroupHelper extends HelperBase {
 
@@ -87,10 +88,9 @@ public class GroupHelper extends HelperBase {
     }
 
     private void selectAllGroups() {
-        var checkboxes =manager.driver.findElements(By.name("selected[]"));
-        for (var checkbox : checkboxes){
-            checkbox.click();
-        }
+        manager.driver
+                .findElements(By.name("selected[]"))
+                .forEach(WebElement::click);
     }
     public List<GroupData> getList() {
         var groups = new ArrayList<GroupData>();

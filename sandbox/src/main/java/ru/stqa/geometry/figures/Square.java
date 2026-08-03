@@ -22,4 +22,7 @@ public record Square(double side) {
     public double perimeter() {
         return 4 * this.side;
     }
+
+    public void printPerimeter() {
+    }
 }

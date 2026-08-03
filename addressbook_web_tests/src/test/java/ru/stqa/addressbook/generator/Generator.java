@@ -3,6 +3,7 @@ package ru.stqa.addressbook.generator;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import model.ContactData;
 import ru.stqa.common.CommonFunctions;
 import model.GroupData;
 import tools.jackson.databind.ObjectMapper;
@@ -15,7 +16,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 public class Generator {
 
     @Parameter(names = {"--type", "-t"})
@@ -29,8 +32,6 @@ public class Generator {
 
     @Parameter(names = {"--count", "-c"})
     int count;
-
-
     public static void main(String[] args) throws IOException {
         var generator = new Generator();
         JCommander.newBuilder()
@@ -39,12 +40,10 @@ public class Generator {
                 .parse(args);
         generator.run();
     }
-
     private void run() throws IOException {
         var data = generate();
         save(data);
     }
-
     private Object generate() {
         if ("groups".equals(type)) {
             return generatorGroups();
@@ -54,20 +53,30 @@ public class Generator {
             throw new IllegalArgumentException("Неизвестный тип данных" + type);
         }
     }
-
-    private Object generatorGroups() {
-        var result = new ArrayList<GroupData>();
-        for (int i = 0; i < count; i++) {
-            result.add(new GroupData()
-                    .withName(CommonFunctions.randomString(i * 10))
-                    .withHeader(CommonFunctions.randomString(i * 10))
-                    .withFooter(CommonFunctions.randomString(i * 10)));
+    private Object generateData(Supplier<Object> dataSupplier) {
+        Stream.generate(dataSupplier).limit(count).collect(Collectors.toList());
+        var result = new ArrayList<Object>();
+        for (int i=0;i<count;i++) {
+            result.add(dataSupplier.get());
         }
         return result;
     }
+    private Object generatorGroups() {
+        return generateData(()-> new GroupData()
+                .withName(CommonFunctions.randomString(10))
+                .withHeader(CommonFunctions.randomString(10))
+                .withFooter(CommonFunctions.randomString(10)));
+    }
+
+
+
+
+
 
     private Object generatorContacts() {
-        return null;
+        return generateData(() -> new ContactData()
+                .withFirstname(CommonFunctions.randomString(10))
+                .withLastname(CommonFunctions.randomString(10)));
     }
 
     private void save(Object data) throws IOException {
