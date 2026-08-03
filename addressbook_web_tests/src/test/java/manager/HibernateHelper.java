@@ -45,6 +45,7 @@ public class HibernateHelper extends HelperBase {
             return session.createQuery("from GroupRecord", GroupRecord.class).list();
         }));
     }
+
     public void createContact(ContactData contactData) {
         sessionFactory.inSession(session -> {
             session.getTransaction().begin();
@@ -102,6 +103,37 @@ public class HibernateHelper extends HelperBase {
         return sessionFactory.fromSession(session -> {
             return convertContactList(session.find(GroupRecord.class, group.id()).contacts);
         });
+    }
+
+    public int getGroupCount() {
+        return sessionFactory.fromSession(session -> {
+            return session.createQuery("select count (*) from GroupRecord", Long.class)
+                    .getSingleResult()
+                    .intValue();
+        });
+    }
+
+    public void createGroup(GroupData groupData) {
+        sessionFactory.inSession(session -> {
+            session.getTransaction().begin();
+            session.persist(convertGroup(groupData));
+            session.getTransaction().commit();
+        });
+    }
+
+    // Вспомогательный метод для конвертации модели данных в сущность Hibernate
+    private static GroupRecord convertGroup(GroupData data) {
+        var id = data.id();
+        if ("".equals(id)) {
+            id = "0";
+        }
+        // Создаем Record с id, name, header, footer
+        return new GroupRecord(
+                Integer.parseInt(id),
+                data.name(),
+                data.header(),
+                data.footer()
+        );
     }
 }
 
