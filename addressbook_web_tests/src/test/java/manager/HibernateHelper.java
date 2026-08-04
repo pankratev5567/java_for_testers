@@ -11,6 +11,8 @@ import org.hibernate.jpa.HibernatePersistenceConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class HibernateHelper extends HelperBase {
 
@@ -29,11 +31,7 @@ public class HibernateHelper extends HelperBase {
     }
 
     static List<GroupData> convertedList(List<GroupRecord> records) {
-        List<GroupData> result = new ArrayList<>();
-        for (var record : records) {
-            result.add(convert(record));
-        }
-        return result;
+        return  records.stream().map(HibernateHelper::convert).collect(Collectors.toList());
     }
 
     private static GroupData convert(GroupRecord record) {
@@ -56,12 +54,7 @@ public class HibernateHelper extends HelperBase {
 
 
     static List<ContactData> convertContactList(List<ContactRecord> records) {
-        List<ContactData> result = new ArrayList<>();
-        for (var record : records) {
-            result.add(convertContact(record)
-            );
-        }
-        return result;
+        return  records.stream().map(HibernateHelper::convertContact).collect(Collectors.toList());
     }
 
     private static ContactData convertContact(ContactRecord record) {
