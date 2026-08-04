@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ContactHelper extends HelperBase{
+public class ContactHelper extends HelperBase {
 
     public ContactHelper(ApplicationManager manager) {
         super(manager);
     }
 
-    public void createContact(ContactData conactD){
+    public void createContact(ContactData conactD) {
         openContactPage();
         setContact(conactD);
         setBirthday();
@@ -24,7 +24,7 @@ public class ContactHelper extends HelperBase{
         returnToHomePage();
     }
 
-    public void addToGroupContact(ContactData s, GroupData group){
+    public void addToGroupContact(ContactData s, GroupData group) {
         openHomePage();
         selectOnlyNonGroup();
         selectContact(s);
@@ -32,10 +32,12 @@ public class ContactHelper extends HelperBase{
         addToGroup();
         openHomePage();
     }
+
     private void selectCheckbox() {
         click(By.xpath("//input[@type='checkbox' and @id!='MassCB']"));
     }
-    public void create(ContactData conactD, GroupData group){
+
+    public void create(ContactData conactD, GroupData group) {
         openContactPage();
         setContact(conactD);
         setBirthday();
@@ -43,13 +45,16 @@ public class ContactHelper extends HelperBase{
         submitContactCreation();
         returnToHomePage();
     }
+
     public void selectGroup(GroupData group) {
         new Select(manager.driver.findElement(By.name("new_group"))).selectByValue(group.id());
     }
-    public void a (){
+
+    public void a() {
         openHomePage();
         selectOnlyNonGroup();
     }
+
     public List<WebElement> checkboxes() {
         return manager.driver.findElements(By.xpath("//input[@type='checkbox' and @id!='MassCB']"));
     }
@@ -57,26 +62,27 @@ public class ContactHelper extends HelperBase{
     public void selectOnlyNonGroup() {
         new Select(manager.driver.findElement(By.name("group"))).selectByValue("[none]");
     }
+
     private void setBirthday() {
-        typeS(By.name("bday"),"13");
-        typeS(By.name("bmonth"),"April");
-        typeS(By.name("byear"),"1999");
+        typeS(By.name("bday"), "13");
+        typeS(By.name("bmonth"), "April");
+        typeS(By.name("byear"), "1999");
     }
 
-    public void removalContact(ContactData conactD){
+    public void removalContact(ContactData conactD) {
         openHomePage();
         selectContact(conactD);
         click(By.name("delete"));
         returnToHomePage();
     }
 
-    public void removeAllContacts(){
+    public void removeAllContacts() {
         openHomePage();
         selectAllContact();
         returnToHomePage();
     }
 
-    public void modifContact(ContactData conactD, ContactData modif){
+    public void modifContact(ContactData conactD, ContactData modif) {
         openHomePage();
         selectContactToEdit(conactD);
         fillContactForm(modif);
@@ -85,9 +91,9 @@ public class ContactHelper extends HelperBase{
     }
 
     private void fillContactForm(ContactData contact) {
-        type(By.name("firstname"),contact.Firstname());
-        type(By.name("middlename"),contact.Middlename());
-        type(By.name("lastname"),contact.Lastname());
+        type(By.name("firstname"), contact.Firstname());
+        type(By.name("middlename"), contact.Middlename());
+        type(By.name("lastname"), contact.Lastname());
     }
 
     private void submitContactUpdate() {
@@ -95,19 +101,24 @@ public class ContactHelper extends HelperBase{
     }
 
     private void selectContactToEdit(ContactData conactD) {
-        click(By.cssSelector(String.format("a[href*='edit.php?id=%s']", conactD.id())));    }
+        click(By.cssSelector(String.format("a[href*='edit.php?id=%s']", conactD.id())));
+    }
 
     private void selectContact(ContactData conactD) {
-        click(By.cssSelector(String.format("input[value='%s']", conactD.id())));    }
+        click(By.cssSelector(String.format("input[value='%s']", conactD.id())));
+    }
+
     private void selectContactStr(String conact) {
-        click(By.cssSelector(String.format("input[value='%s']", Integer.parseInt(conact))));    }
+        click(By.cssSelector(String.format("input[value='%s']", Integer.parseInt(conact))));
+    }
 
     private void selectAllContact() {
         var checkboxes = manager.driver.findElements(By.name("selected[]"));
         for (var checkbox : checkboxes) {
             checkbox.click();
         }
-        click(By.name("delete"));;
+        click(By.name("delete"));
+        ;
     }
 
     private void openContactPage() {
@@ -121,26 +132,29 @@ public class ContactHelper extends HelperBase{
             click(By.linkText("home"));
         }
     }
+
     private void setContact(ContactData contact) {
-        type(By.name("firstname"),contact.Firstname());
+        type(By.name("firstname"), contact.Firstname());
         type(By.name("middlename"), contact.Middlename());
-        type(By.name("lastname"),contact.Lastname());
-        type(By.name("nickname"),contact.Nickname());
+        type(By.name("lastname"), contact.Lastname());
+        type(By.name("nickname"), contact.Nickname());
         // attach(By.name("photo"),contact.Photo());
-        type(By.name("title"),contact.Title());
-        type(By.name("company"),contact.Company());
-        type(By.name("address"),contact.Address());
-        type(By.name("home"),contact.Home());
-        type(By.name("mobile"),contact.Mobile());
-        type(By.name("work"),contact.Work());
+        type(By.name("title"), contact.Title());
+        type(By.name("company"), contact.Company());
+        type(By.name("address"), contact.Address());
+        type(By.name("home"), contact.Home());
+        type(By.name("mobile"), contact.Mobile());
+        type(By.name("work"), contact.Work());
         type(By.name("email"), contact.EmailOne());
-        type(By.name("email2"),contact.EmailTwo());
-        type(By.name("email3"),contact.EmailThree());
-        type(By.name("homepage"),contact.Homepage());
+        type(By.name("email2"), contact.EmailTwo());
+        type(By.name("email3"), contact.EmailThree());
+        type(By.name("homepage"), contact.Homepage());
     }
+
     private void submitContactCreation() {
         click(By.name("submit"));
     }
+
     // Возврат на домашнюю страницу
     private void returnToHomePage() {
         click(By.linkText("home page"));
@@ -152,32 +166,35 @@ public class ContactHelper extends HelperBase{
         return manager.isElementPresent(By.name("selected[]"));
     }
 
-    public int getContactCount(){
+    public int getContactCount() {
         openHomePage();
         return manager.driver.findElements(By.name("selected[]")).size();
     }
+
     private void selectAddGroup(GroupData group) {
         click(By.cssSelector(String.format("select[name='to_group'] option[value='%s']", group.id())));
     }
+
     private void addToGroup() {
         click(By.name("add"));
     }
 
-    public List<ContactData> getList(){
+    public List<ContactData> getList() {
         openHomePage();
         var contacts = new ArrayList<ContactData>();
         var trs = manager.driver.findElements(By.cssSelector("tr[name='entry']"));
-        for (var tr : trs){
+        for (var tr : trs) {
             var checkbox = tr.findElement(By.name("selected[]"));
             var id = checkbox.getAttribute("value");
-            var lastName = tr.findElement(By.cssSelector("td:nth-child(2)")).getText();;
-            var firstName  = tr.findElement(By.cssSelector("td:nth-child(3)")).getText();
+            var lastName = tr.findElement(By.cssSelector("td:nth-child(2)")).getText();
+            ;
+            var firstName = tr.findElement(By.cssSelector("td:nth-child(3)")).getText();
             contacts.add(new ContactData().withId(id).withNames(firstName, lastName));
         }
         return contacts;
     }
 
-    public List<String> getNonGroupList(){
+    public List<String> getNonGroupList() {
         openHomePage();
         selectOnlyNonGroup();
         List<WebElement> elements = manager.driver.findElements(By.xpath("//input[@type='checkbox' and @id!='MassCB']"));
@@ -186,6 +203,7 @@ public class ContactHelper extends HelperBase{
                 .filter(id -> id != null && !id.isEmpty())
                 .collect(Collectors.toList());
     }
+
     public void RemoveGroupFromContact(ContactData contact, GroupData group) {
         openHomePage();
         selectGroupFilter(group);
@@ -193,10 +211,17 @@ public class ContactHelper extends HelperBase{
         removeFromGroup();
         openHomePage();
     }
+
     private void selectGroupFilter(GroupData group) {
         click(By.cssSelector(String.format("select[name='group'] option[value='%s']", group.id())));
     }
+
     private void removeFromGroup() {
         click(By.name("remove"));
+    }
+
+    public Object getPhones(ContactData contact) {
+        return manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../../td[6]", contact.id()))).getText();
     }
 }
