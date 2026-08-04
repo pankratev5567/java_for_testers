@@ -7,7 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ContactHelper extends HelperBase {
@@ -142,9 +144,9 @@ public class ContactHelper extends HelperBase {
         type(By.name("title"), contact.Title());
         type(By.name("company"), contact.Company());
         type(By.name("address"), contact.Address());
-        type(By.name("home"), contact.Home());
-        type(By.name("mobile"), contact.Mobile());
-        type(By.name("work"), contact.Work());
+        type(By.name("home"), contact.home());
+        type(By.name("mobile"), contact.mobile());
+        type(By.name("work"), contact.work());
         type(By.name("email"), contact.EmailOne());
         type(By.name("email2"), contact.EmailTwo());
         type(By.name("email3"), contact.EmailThree());
@@ -223,5 +225,16 @@ public class ContactHelper extends HelperBase {
     public Object getPhones(ContactData contact) {
         return manager.driver.findElement(By.xpath(
                 String.format("//input[@id='%s']/../../td[6]", contact.id()))).getText();
+    }
+
+    public Map<String,String> getPhones() {
+        var result = new HashMap<String,String>();
+        List<WebElement> rows =  manager.driver.findElements(By.name("entry"));
+        for (var row:rows){
+            var id = row.findElement(By.tagName("input")).getAttribute("id");
+            var phones = row.findElements(By.tagName("td")).get(5).getText();
+            result.put(id,phones);
+        }
+        return result;
     }
 }
