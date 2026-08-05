@@ -86,4 +86,27 @@ public record ContactData(String id,
                 this.work, this.EmailOne, this.EmailTwo,
                 this.EmailThree, this.Homepage,secondary);
     }
+    public ContactData withAddress(String Address) {
+        return new ContactData(this.id, this.Firstname, this.Middlename, this.Lastname, this.Nickname, this.Photo, this.Title, this.Company, Address, this.home, this.mobile,
+                this.work, this.EmailOne, this.EmailTwo,
+                this.EmailThree, this.Homepage,this.secondary);
+    }
+
+    public ContactData withEmailOne(String EmailOne) {
+        return new ContactData(this.id, this.Firstname, Middlename, Lastname, this.Nickname, this.Photo, this.Title, this.Company, this.Address, this.home, this.mobile,
+                this.work, EmailOne, this.EmailTwo,
+                this.EmailThree, this.Homepage,this.secondary);
+    }
+
+    public ContactData withEmailTwo(String EmailTwo) {
+        return new ContactData(this.id, this.Firstname, Middlename, Lastname, this.Nickname, this.Photo, this.Title, this.Company, this.Address, this.home, this.mobile,
+                this.work, this.EmailOne, EmailTwo,
+                this.EmailThree, this.Homepage,this.secondary);
+    }
+
+    public ContactData withEmailThree(String EmailThree) {
+        return new ContactData(this.id, this.Firstname, Middlename, Lastname, this.Nickname, this.Photo, this.Title, this.Company, this.Address, this.home, this.mobile,
+                this.work, this.EmailOne, this.EmailTwo,
+                EmailThree, this.Homepage,this.secondary);
+    }
 }

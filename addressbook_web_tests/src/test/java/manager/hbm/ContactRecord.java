@@ -30,14 +30,21 @@ public class ContactRecord {
 
 
 
-    public ContactRecord(){
-
+    public ContactRecord() {
+    }
+    public ContactRecord(int id, String firstname, String lastname, String home, String mobile, String work,
+                String address, String email, String email2, String email3) {
+            this.id = id;
+            this.firstname = firstname;
+            this.lastname = lastname;
+            this.home = home;
+            this.mobile = mobile;
+            this.work = work;
+            this.address = address;
+            this.email = email;
+            this.email2 = email2;
+            this.email3 = email3;
+        }
     }
 
-    public ContactRecord(int id, String firstname, String lastname) {
-        this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-    }
 
-}

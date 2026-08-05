@@ -64,7 +64,11 @@ public class HibernateHelper extends HelperBase {
                 .withLastname(record.lastname)
                 .withhome(record.home)
                 .withmobile(record.mobile)
-                .withwork(record.work);
+                .withwork(record.work)
+                .withAddress(record.address)
+                .withEmailOne(record.email)
+                .withEmailTwo(record.email2)
+                .withEmailThree(record.email3);
     }
 
     private static ContactRecord convertContact(ContactData data) {
@@ -75,7 +79,14 @@ public class HibernateHelper extends HelperBase {
         return new ContactRecord(
                 Integer.parseInt(id),
                 data.Firstname(),
-                data.Lastname()
+                data.Lastname(),
+                data.home(),
+                data.mobile(),
+                data.work(),
+                data.Address(),
+                data.EmailOne(),
+                data.EmailTwo(),
+                data.EmailThree()
         );
     }
 
@@ -84,14 +95,11 @@ public class HibernateHelper extends HelperBase {
             return session.createQuery("from ContactRecord", ContactRecord.class).list();
         }));
     }
-
-
     public long getContactCount() {
         return sessionFactory.fromSession(session -> {
             return session.createQuery("select count (*) from ContactRecord", Long.class).getSingleResult();
         });
     }
-
 
     public List<ContactData> getContactsInGroup(GroupData group) {
         return sessionFactory.fromSession(session -> {
@@ -114,14 +122,11 @@ public class HibernateHelper extends HelperBase {
             session.getTransaction().commit();
         });
     }
-
-    // Вспомогательный метод для конвертации модели данных в сущность Hibernate
     private static GroupRecord convertGroup(GroupData data) {
         var id = data.id();
         if ("".equals(id)) {
             id = "0";
         }
-        // Создаем Record с id, name, header, footer
         return new GroupRecord(
                 Integer.parseInt(id),
                 data.name(),
