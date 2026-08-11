@@ -5,6 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+
 import java.util.Properties;
 
 public class ApplicationManager {
@@ -14,6 +15,7 @@ public class ApplicationManager {
     private Properties properties;
     private SessionHelper sessionHelper;
     private HttpSessionHelper httpSession;
+    private JamesCliHelper jamesCliHelper;
 
     public void init(String browser, Properties properties) {
         this.browser = browser;
@@ -48,7 +50,12 @@ public class ApplicationManager {
         }
         return httpSession;
     }
-
+    public JamesCliHelper jamesCli() {
+        if (jamesCliHelper==null){
+            jamesCliHelper=new JamesCliHelper(this);
+        }
+        return jamesCliHelper;
+    }
     public String getProperties(String name) {
         return properties.getProperty(name);
     }
