@@ -7,19 +7,21 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import java.time.Duration;
 
 public class MailHelper extends HelperBase {
     public MailHelper(ApplicationManager manager) {
         super(manager);
     }
+
     public List<MailMessage> receive(String username, String password, Duration duration) {
 
         var start = System.currentTimeMillis();
-        while (System.currentTimeMillis()<start+duration.toMillis()){
+        while (System.currentTimeMillis() < start + duration.toMillis()) {
             try {
 
-                var inbox = getInbox(username,password);
+                var inbox = getInbox(username, password);
                 inbox.open(Folder.READ_ONLY);
                 var messages = inbox.getMessages();
                 var result = Arrays.stream(messages)
@@ -35,7 +37,7 @@ public class MailHelper extends HelperBase {
                         .toList();
                 inbox.close();
                 inbox.getStore().close();
-                if (result.size()>0) {
+                if (result.size() > 0) {
                     return result;
                 }
             } catch (MessagingException e) {
@@ -51,7 +53,7 @@ public class MailHelper extends HelperBase {
     }
     public void drain(String username, String password) {
         try {
-            var inbox = getInbox(username,password);
+            var inbox = getInbox(username, password);
             inbox.open(Folder.READ_WRITE);
             Arrays.stream(inbox.getMessages()).forEach(m -> {
                 try {
@@ -77,5 +79,13 @@ public class MailHelper extends HelperBase {
             throw new RuntimeException(e);
         }
     }
-
+    public String getUrl(List<MailMessage> message) {
+        var text = message.get(0).content();
+        var pattern = Pattern.compile("http://\\S*");
+        var matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return text.substring(matcher.start(), matcher.end());
+        }
+        throw new RuntimeException("No url");
+    }
 }

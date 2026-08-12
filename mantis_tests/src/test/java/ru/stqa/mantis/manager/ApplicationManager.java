@@ -17,7 +17,7 @@ public class ApplicationManager {
     private HttpSessionHelper httpSession;
     private JamesCliHelper jamesCliHelper;
     private MailHelper mailHelper;
-
+    private UiHelper uiHelper;
     public void init(String browser, Properties properties) {
         this.browser = browser;
         this.properties = properties;
@@ -64,6 +64,13 @@ public class ApplicationManager {
         }
         return mailHelper;
     }
+    public UiHelper uiHelper() {
+        if (uiHelper==null){
+            uiHelper=new UiHelper(this);
+        }
+        return uiHelper;
+    }
+
     public String getProperties(String name) {
         return properties.getProperty(name);
     }

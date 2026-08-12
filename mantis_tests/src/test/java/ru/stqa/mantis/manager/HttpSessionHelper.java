@@ -5,17 +5,16 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.net.CookieManager;
+import org.openqa.selenium.By;
 
 public class HttpSessionHelper extends HelperBase {
 
     OkHttpClient client;
 
-
     public HttpSessionHelper(ApplicationManager manager) {
         super(manager);
         client = new OkHttpClient.Builder().cookieJar(new JavaNetCookieJar(new CookieManager())).build();
     }
-
     public void login(String username, String password) {
         RequestBody formBody = new FormBody.Builder()
                 .add("username", username)
@@ -31,7 +30,6 @@ public class HttpSessionHelper extends HelperBase {
             throw new RuntimeException(e);
         }
     }
-
     public boolean isLoggedIn() {
         Request request = new Request.Builder()
                 .url(manager.getProperties("web.baseURL"))
