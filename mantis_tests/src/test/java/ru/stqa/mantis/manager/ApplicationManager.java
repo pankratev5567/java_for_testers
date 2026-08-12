@@ -16,6 +16,7 @@ public class ApplicationManager {
     private SessionHelper sessionHelper;
     private HttpSessionHelper httpSession;
     private JamesCliHelper jamesCliHelper;
+    private MailHelper mailHelper;
 
     public void init(String browser, Properties properties) {
         this.browser = browser;
@@ -55,6 +56,13 @@ public class ApplicationManager {
             jamesCliHelper=new JamesCliHelper(this);
         }
         return jamesCliHelper;
+    }
+
+    public MailHelper mail() {
+        if (mailHelper==null){
+            mailHelper=new MailHelper(this);
+        }
+        return mailHelper;
     }
     public String getProperties(String name) {
         return properties.getProperty(name);
