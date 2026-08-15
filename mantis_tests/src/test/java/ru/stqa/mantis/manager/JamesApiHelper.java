@@ -31,7 +31,5 @@ public class JamesApiHelper extends HelperBase{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }
