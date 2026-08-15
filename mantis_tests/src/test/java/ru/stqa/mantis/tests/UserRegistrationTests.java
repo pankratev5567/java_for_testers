@@ -13,7 +13,7 @@ public class UserRegistrationTests extends TestBase {
         String email = String.format("%s@localhost", CommonFunctions.randomString(7));
         String pass = app.getProperties("pass");
 
-        app.jamesCli().addUser(email, pass);  
+        app.jamesCli().addUser(email, pass);
         app.mail().drain(email, pass);
         app.uiHelper().startRegistration(user, email);
         var messages = app.mail().receive(email, pass, Duration.ofSeconds(30));
