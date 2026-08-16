@@ -3,7 +3,7 @@ package ru.stqa.mantis.model;
 public record IssueData(String summary, String description, Long project, Long category) {
 
     public IssueData(){
-        this("","",0L,0L);
+        this("","",0L,1L);
     }
 
     public IssueData withSummary(String summary){
