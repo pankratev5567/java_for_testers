@@ -23,6 +23,31 @@ public class UserRegistrationTests extends TestBase {
         app.http().login(user, pass);
         Assertions.assertTrue(app.http().isLoggedIn(), "Не удалось войти после регистрации");
     }
+    @Test
+    void canRegisterUserApiAlternative () {
+        var user = CommonFunctions.randomString(9);
+        var email = (String.format("%s@localhost", CommonFunctions.randomString(7)));
+        var pass = app.getProperties("pass");
+
+        try {
+            app.jamesApiHelper().addUser(email, pass);
+            app.rest().userRegistration(user, email);
+
+            var message = app.mail().receive(email, pass, Duration.ofSeconds(25));
+            Assertions.assertFalse(message.isEmpty(), "Письмо не пришло");
+            System.out.println(message);
+
+            var url = app.mail().getUrl(message);
+            System.out.println(url);
+
+            app.uiHelper().finishRegistration(url, user, pass);
+
+            app.http().login(user, pass);
+            Assertions.assertTrue(app.http().isLoggedIn(), "Не удалось войти после регистрации");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 //    @Test
 //    void canRegisterUser(){
