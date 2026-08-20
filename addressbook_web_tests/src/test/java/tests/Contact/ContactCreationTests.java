@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tests.TestBase;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
+import io.qameta.allure.Allure;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -27,14 +28,15 @@ public class ContactCreationTests extends TestBase {
         try (var reader = new FileReader("contacts.json");
              var breader = new BufferedReader(reader)
         ) {
-            var line =  breader.readLine();
-            while (line!= null){
-                json=json+line;
-                line=breader.readLine();
+            var line = breader.readLine();
+            while (line != null) {
+                json = json + line;
+                line = breader.readLine();
             }
         }
         ObjectMapper mapper = new ObjectMapper();
-        var value = mapper.readValue(json,  new TypeReference<List<ContactData>>(){});
+        var value = mapper.readValue(json, new TypeReference<List<ContactData>>() {
+        });
         result.addAll(value);
         return result;
     }
@@ -53,11 +55,11 @@ public class ContactCreationTests extends TestBase {
     //    app.contactHelper().createContact(new ContactData("","Майкл", "Джозеф", "Джексон", "Michael","", "King of Pop", "Sony Music",
     //            "Neverland Ranch, 5225 Figueroa Mountain Road, Los Olivos, CA 93441", "USA", "555-1234", "work", "michael@jackson.com",
     //            "mj@neverland.com", "info@michaeljackson.com", "home"));
-   // }
+    // }
 
     @ParameterizedTest
     @MethodSource("contactProvider")
-    public void canCreateMultipleContactFIO(ContactData contact){
+    public void canCreateMultipleContactFIO(ContactData contact) {
         var oldContact = app.hbm().getContactList();
         app.contactHelper().createContact(contact);
         var newContact = app.hbm().getContactList();
@@ -66,21 +68,21 @@ public class ContactCreationTests extends TestBase {
         };
         newContact.sort(compareById);
         var expectedList = new ArrayList<>(oldContact);
-        expectedList.add(contact.withId(newContact.get(newContact.size()-1).id()));
+        expectedList.add(contact.withId(newContact.get(newContact.size() - 1).id()));
         expectedList.sort(compareById);
         Assertions.assertEquals(newContact, expectedList);
     }
 
     @Test
-    public void canCreateContactInGroup(){
+    public void canCreateContactInGroup() {
         var contact = new ContactData()
                 .withFirstname(CommonFunctions.randomString(10))
                 .withLastname(CommonFunctions.randomString(10));
-        if(app.groupHelper().getCount() == 0){
+        if (app.groupHelper().getCount() == 0) {
             app.groupHelper().createGroup(new GroupData("", "group name", "header", "footer"));
         }
         var maxIndex = app.hbm().getGroupList().size();
-        var group = app.hbm().getGroupList().get(maxIndex-1);
+        var group = app.hbm().getGroupList().get(maxIndex - 1);
         var oldRelated = app.hbm().getContactsInGroup(group);
         app.contactHelper().create(contact, group);
         var newRelated = app.hbm().getContactsInGroup(group);
@@ -97,15 +99,16 @@ public class ContactCreationTests extends TestBase {
         Assertions.assertEquals(oldRelated.size() + 1, newRelated.size());
         Assertions.assertEquals(newRelated, expectedList);
     }
+
     @Test
-    public void addContactToGroup(){
+    public void addContactToGroup() {
         app.contactHelper().a();
-        if (app.contactHelper().checkboxes().isEmpty()){
+        if (app.contactHelper().checkboxes().isEmpty()) {
             app.hbm().createContact(new ContactData()
                     .withNames(CommonFunctions.randomString(10),
                             CommonFunctions.randomString(10)));
         }
-        if(app.hbm().getGroupCount() == 0){
+        if (app.hbm().getGroupCount() == 0) {
             app.hbm().createGroup(new GroupData("", "group name", "header", "footer"));
         }
         var allContactList = app.hbm().getContactList();
@@ -119,11 +122,10 @@ public class ContactCreationTests extends TestBase {
                 .findFirst()
                 .orElse(null);
         var maxIndex = app.hbm().getGroupList().size();
-        var group = app.hbm().getGroupList().get(maxIndex-1); //жертва
+        var group = app.hbm().getGroupList().get(maxIndex - 1); //жертва
         var oldRelated = app.hbm().getContactsInGroup(group);
         app.contactHelper().addToGroupContact(contact, group);
         var newRelated = app.hbm().getContactsInGroup(group);
-
 
 
         Comparator<ContactData> compareById = (o1, o2) -> {
@@ -137,6 +139,7 @@ public class ContactCreationTests extends TestBase {
 
         Assertions.assertEquals(newRelated, expectedList);
     }
+
     @Test
     public void deletedContactFromGroup() {
         if (app.hbm().getContactCount() == 0) {
@@ -187,5 +190,50 @@ public class ContactCreationTests extends TestBase {
         Assertions.assertEquals(newContacts, expectedList);
 
     }
+
+    @Test
+    public void CanCreateContactInGroupAllure() {
+        var contact = new ContactData()
+                .withNames(CommonFunctions.randomString(10), CommonFunctions.randomString(10));
+
+        Allure.step("если нет группы, то создать", step -> {
+            if (app.hbm().getGroupCount() == 0) {
+                app.hbm().createGroup(new GroupData("", "group name", "header", "footer"));
+            }
+        });
+
+        var group = app.hbm().getGroupList().get(0);
+        Allure.step("список контактов до создания", step -> {
+            step.parameter("group", group.name());
+            step.parameter("group.id", group.id());
+        });
+
+        var oldRelated = app.hbm().getContactsInGroup(group);
+
+        app.contactHelper().create(contact, group);
+
+        Allure.step("список контактов после создания", step -> {
+            var newRelated = app.hbm().getContactsInGroup(group);
+            step.parameter("contacts.after", newRelated.size());
+        });
+
+        var newRelated = app.hbm().getContactsInGroup(group);
+
+        Comparator<ContactData> compareById = (o1, o2) ->
+                Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+
+        newRelated.sort(compareById);
+        var maxId = newRelated.get(newRelated.size() - 1).id();
+
+        var expectedList = new ArrayList<>(oldRelated);
+        expectedList.add(contact.withId(maxId));
+        expectedList.sort(compareById);
+
+        Allure.step("проверка", step -> {
+            Assertions.assertEquals(newRelated, expectedList);
+        });
+    }
 }
+
+
 

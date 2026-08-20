@@ -41,8 +41,6 @@ public class ApplicationManager {
             Runtime.getRuntime().addShutdownHook(new Thread(driver::quit));
             driver.get(properties.getProperty("web.baseURL"));
             driver.manage().window().setSize(new Dimension(1936, 1048));
-
-            // Выполняем логин, если ещё не залогинились
             if (!loggedIn) {
                 performLogin();
                 loggedIn = true;
@@ -57,7 +55,7 @@ public class ApplicationManager {
         driver.findElement(By.name("user")).sendKeys(user);
         driver.findElement(By.name("pass")).sendKeys(pass);
         driver.findElement(By.xpath("//input[@value='Login']")).click();
-        // Небольшая задержка для загрузки страницы после логина
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
